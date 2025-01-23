@@ -164,5 +164,39 @@ app.get("/movies/:id", (req, res) => {
   else res.status(404).json({ error: "Movie not found" });
 });
 
+// Update a movie (PUT)
+app.put("/movies/:id", (req, res) => {
+  const movieIndex = movies.findIndex((m) => m.id === parseInt(req.params.id));
+  if (movieIndex !== -1) {
+    const updatedMovie = { id: movies[movieIndex].id, ...req.body };
+    movies[movieIndex] = updatedMovie;
+    res.json(updatedMovie);
+  } else {
+    res.status(404).json({ error: "Movie not found" });
+  }
+});
+
+// Partially update a movie (PATCH)
+app.patch("/movies/:id", (req, res) => {
+  const movie = movies.find((m) => m.id === parseInt(req.params.id));
+  if (movie) {
+    Object.assign(movie, req.body);
+    res.json(movie);
+  } else {
+    res.status(404).json({ error: "Movie not found" });
+  }
+});
+
+// Delete a movie (DELETE)
+app.delete("/movies/:id", (req, res) => {
+  const movieIndex = movies.findIndex((m) => m.id === parseInt(req.params.id));
+  if (movieIndex !== -1) {
+    const deletedMovie = movies.splice(movieIndex, 1); // Remove movie from array
+    res.json({ message: "Movie deleted successfully", movie: deletedMovie[0] });
+  } else {
+    res.status(404).json({ error: "Movie not found" });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`API is running on port ${PORT}`));
