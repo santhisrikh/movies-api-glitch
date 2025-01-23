@@ -1,119 +1,168 @@
-/**
- * This is the main Node.js server script for your project
- * Check out the two endpoints this back-end API provides in fastify.get and fastify.post below
- */
+const express = require("express");
+const app = express();
 
-const path = require("path");
+app.use(express.json());
 
-// Require the fastify framework and instantiate it
-const fastify = require("fastify")({
-  // Set this to true for detailed logging:
-  logger: false,
-});
+const users = [
+  { username: "admin", password: "password123" },
+  { username: "user", password: "user123" },
+];
 
-// ADD FAVORITES ARRAY VARIABLE FROM TODO HERE
-
-// Setup our static files
-fastify.register(require("@fastify/static"), {
-  root: path.join(__dirname, "public"),
-  prefix: "/", // optional: default '/'
-});
-
-// Formbody lets us parse incoming forms
-fastify.register(require("@fastify/formbody"));
-
-// View is a templating manager for fastify
-fastify.register(require("@fastify/view"), {
-  engine: {
-    handlebars: require("handlebars"),
+const movies = [
+  {
+    id: 1,
+    title: "Inception",
+    poster: "https://via.placeholder.com/150",
+    releaseDate: "2010-07-16",
+    genre: "Sci-Fi",
+    description: "A mind-bending thriller by Christopher Nolan.",
   },
+  {
+    id: 2,
+    title: "The Dark Knight",
+    poster: "https://via.placeholder.com/150",
+    releaseDate: "2008-07-18",
+    genre: "Action",
+    description: "The Caped Crusader takes on the Joker.",
+  },
+  {
+    id: 3,
+    title: "The Matrix",
+    poster: "https://via.placeholder.com/150",
+    releaseDate: "1999-03-31",
+    genre: "Sci-Fi",
+    description: "A hacker learns the true nature of reality and his role in the war against its controllers.",
+  },
+  {
+    id: 4,
+    title: "Titanic",
+    poster: "https://via.placeholder.com/150",
+    releaseDate: "1997-12-19",
+    genre: "Romance",
+    description: "A young couple from different social backgrounds fall in love aboard the ill-fated R.M.S. Titanic.",
+  },
+  {
+    id: 5,
+    title: "Avatar",
+    poster: "https://via.placeholder.com/150",
+    releaseDate: "2009-12-18",
+    genre: "Sci-Fi",
+    description: "A paraplegic marine dispatched to the moon Pandora on a unique mission becomes torn between following his orders and protecting the world he feels is his home.",
+  },
+  {
+    id: 6,
+    title: "The Godfather",
+    poster: "https://via.placeholder.com/150",
+    releaseDate: "1972-03-24",
+    genre: "Crime",
+    description: "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+  },
+  {
+    id: 7,
+    title: "Pulp Fiction",
+    poster: "https://via.placeholder.com/150",
+    releaseDate: "1994-10-14",
+    genre: "Crime",
+    description: "The lives of two mob hitmen, a boxer, a gangster's wife, and a pair of diner bandits intertwine in four tales of violence and redemption.",
+  },
+  {
+    id: 8,
+    title: "Forrest Gump",
+    poster: "https://via.placeholder.com/150",
+    releaseDate: "1994-07-06",
+    genre: "Drama",
+    description: "The presidencies of Kennedy and Johnson, the Vietnam War, the Watergate scandal, and other historical events unfold from the perspective of an Alabama man with an extraordinary amount of luck.",
+  },
+  {
+    id: 9,
+    title: "The Shawshank Redemption",
+    poster: "https://via.placeholder.com/150",
+    releaseDate: "1994-09-22",
+    genre: "Drama",
+    description: "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
+  },
+  {
+    id: 10,
+    title: "Interstellar",
+    poster: "https://via.placeholder.com/150",
+    releaseDate: "2014-11-07",
+    genre: "Sci-Fi",
+    description: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
+  },
+  {
+    id: 11,
+    title: "Gladiator",
+    poster: "https://via.placeholder.com/150",
+    releaseDate: "2000-05-05",
+    genre: "Action",
+    description: "A former Roman General sets out to exact vengeance against the corrupt emperor who murdered his family and sent him into slavery.",
+  },
+  {
+    id: 12,
+    title: "The Lion King",
+    poster: "https://via.placeholder.com/150",
+    releaseDate: "1994-06-15",
+    genre: "Animation",
+    description: "Lion prince Simba and his father are targeted by his bitter uncle, who wants to ascend the throne himself.",
+  },
+  {
+    id: 13,
+    title: "Fight Club",
+    poster: "https://via.placeholder.com/150",
+    releaseDate: "1999-10-15",
+    genre: "Drama",
+    description: "An insomniac office worker and a soap salesman form an underground fight club that evolves into something much, much more.",
+  },
+  {
+    id: 14,
+    title: "The Avengers",
+    poster: "https://via.placeholder.com/150",
+    releaseDate: "2012-05-04",
+    genre: "Action",
+    description: "Earth's mightiest heroes must come together and learn to fight as a team if they are going to stop the mischievous Loki and his alien army from subjugating Earth.",
+  },
+  {
+    id: 15,
+    title: "The Lord of the Rings: The Return of the King",
+    poster: "https://via.placeholder.com/150",
+    releaseDate: "2003-12-17",
+    genre: "Fantasy",
+    description: "Gandalf and Aragorn lead the World of Men against Sauron to draw his gaze from Frodo and Sam as they approach Mount Doom with the One Ring.",
+  }
+];
+
+
+// Generate a random token
+const generateToken = () => {
+  return crypto.randomBytes(16).toString("hex");
+};
+
+// Login API
+app.post("/login", (req, res) => {
+  const { username, password } = req.body;
+  const user = users.find(
+    (u) => u.username === username && u.password === password
+  );
+
+  if (user) {
+    const token = generateToken();
+    res.json({ success: true, token });
+  } else {
+    res.status(401).json({ success: false, message: "Invalid credentials" });
+  }
 });
 
-// Load and parse SEO data
-const seo = require("./src/seo.json");
-if (seo.url === "glitch-default") {
-  seo.url = `https://${process.env.PROJECT_DOMAIN}.glitch.me`;
-}
 
-/**
- * Our home page route
- *
- * Returns src/pages/index.hbs with data built into it
- */
-fastify.get("/", function (request, reply) {
-  // params is an object we'll pass to our handlebars template
-  let params = { seo: seo };
-
-  // If someone clicked the option for a random color it'll be passed in the querystring
-  if (request.query.randomize) {
-    // We need to load our color data file, pick one at random, and add it to the params
-    const colors = require("./src/colors.json");
-    const allColors = Object.keys(colors);
-    let currentColor = allColors[(allColors.length * Math.random()) << 0];
-
-    // Add the color properties to the params object
-    params = {
-      color: colors[currentColor],
-      colorError: null,
-      seo: seo,
-    };
-  }
-
-  // The Handlebars code will be able to access the parameter values and build them into the page
-  return reply.view("/src/pages/index.hbs", params);
+// Movies API
+app.get("/movies", (req, res) => {
+  res.json(movies);
 });
 
-/**
- * Our POST route to handle and react to form submissions
- *
- * Accepts body data indicating the user choice
- */
-fastify.post("/", function (request, reply) {
-  // Build the params object to pass to the template
-  let params = { seo: seo };
-
-  // If the user submitted a color through the form it'll be passed here in the request body
-  let color = request.body.color;
-
-  // If it's not empty, let's try to find the color
-  if (color) {
-    // ADD CODE FROM TODO HERE TO SAVE SUBMITTED FAVORITES
-
-    // Load our color data file
-    const colors = require("./src/colors.json");
-
-    // Take our form submission, remove whitespace, and convert to lowercase
-    color = color.toLowerCase().replace(/\s/g, "");
-
-    // Now we see if that color is a key in our colors object
-    if (colors[color]) {
-      // Found one!
-      params = {
-        color: colors[color],
-        colorError: null,
-        seo: seo,
-      };
-    } else {
-      // No luck! Return the user value as the error property
-      params = {
-        colorError: request.body.color,
-        seo: seo,
-      };
-    }
-  }
-
-  // The Handlebars template will use the parameter values to update the page with the chosen color
-  return reply.view("/src/pages/index.hbs", params);
+app.get("/movies/:id", (req, res) => {
+  const movie = movies.find((m) => m.id === parseInt(req.params.id));
+  if (movie) res.json(movie);
+  else res.status(404).json({ error: "Movie not found" });
 });
 
-// Run the server and report out to the logs
-fastify.listen(
-  { port: process.env.PORT, host: "0.0.0.0" },
-  function (err, address) {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
-    console.log(`Your app is listening on ${address}`);
-  }
-);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`API is running on port ${PORT}`));
