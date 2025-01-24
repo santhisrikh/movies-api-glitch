@@ -1,7 +1,11 @@
 const express = require("express");
+const crypto = require("crypto");
+
+const cors = require("cors");
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 const users = [
   { username: "admin", password: "password123" },
