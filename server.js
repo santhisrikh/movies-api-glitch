@@ -16,7 +16,7 @@ const movies = [
   {
     id: 1,
     title: "Inception",
-    poster: "https://via.placeholder.com/150",
+    poster: "https://placehold.co/150",
     releaseDate: "2010-07-16",
     genre: "Sci-Fi",
     description: "A mind-bending thriller by Christopher Nolan.",
@@ -24,7 +24,7 @@ const movies = [
   {
     id: 2,
     title: "The Dark Knight",
-    poster: "https://via.placeholder.com/150",
+    poster: "https://placehold.co/150",
     releaseDate: "2008-07-18",
     genre: "Action",
     description: "The Caped Crusader takes on the Joker.",
@@ -32,7 +32,7 @@ const movies = [
   {
     id: 3,
     title: "The Matrix",
-    poster: "https://via.placeholder.com/150",
+    poster: "https://placehold.co/150",
     releaseDate: "1999-03-31",
     genre: "Sci-Fi",
     description: "A hacker learns the true nature of reality and his role in the war against its controllers.",
@@ -40,7 +40,7 @@ const movies = [
   {
     id: 4,
     title: "Titanic",
-    poster: "https://via.placeholder.com/150",
+    poster: "https://placehold.co/150",
     releaseDate: "1997-12-19",
     genre: "Romance",
     description: "A young couple from different social backgrounds fall in love aboard the ill-fated R.M.S. Titanic.",
@@ -48,7 +48,7 @@ const movies = [
   {
     id: 5,
     title: "Avatar",
-    poster: "https://via.placeholder.com/150",
+    poster: "https://placehold.co/150",
     releaseDate: "2009-12-18",
     genre: "Sci-Fi",
     description: "A paraplegic marine dispatched to the moon Pandora on a unique mission becomes torn between following his orders and protecting the world he feels is his home.",
@@ -56,7 +56,7 @@ const movies = [
   {
     id: 6,
     title: "The Godfather",
-    poster: "https://via.placeholder.com/150",
+    poster: "https://placehold.co/150",
     releaseDate: "1972-03-24",
     genre: "Crime",
     description: "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
@@ -64,7 +64,7 @@ const movies = [
   {
     id: 7,
     title: "Pulp Fiction",
-    poster: "https://via.placeholder.com/150",
+    poster: "https://placehold.co/150",
     releaseDate: "1994-10-14",
     genre: "Crime",
     description: "The lives of two mob hitmen, a boxer, a gangster's wife, and a pair of diner bandits intertwine in four tales of violence and redemption.",
@@ -72,7 +72,7 @@ const movies = [
   {
     id: 8,
     title: "Forrest Gump",
-    poster: "https://via.placeholder.com/150",
+    poster: "https://placehold.co/150",
     releaseDate: "1994-07-06",
     genre: "Drama",
     description: "The presidencies of Kennedy and Johnson, the Vietnam War, the Watergate scandal, and other historical events unfold from the perspective of an Alabama man with an extraordinary amount of luck.",
@@ -80,7 +80,7 @@ const movies = [
   {
     id: 9,
     title: "The Shawshank Redemption",
-    poster: "https://via.placeholder.com/150",
+    poster: "https://placehold.co/150",
     releaseDate: "1994-09-22",
     genre: "Drama",
     description: "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
@@ -88,7 +88,7 @@ const movies = [
   {
     id: 10,
     title: "Interstellar",
-    poster: "https://via.placeholder.com/150",
+    poster: "https://placehold.co/150",
     releaseDate: "2014-11-07",
     genre: "Sci-Fi",
     description: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
@@ -96,7 +96,7 @@ const movies = [
   {
     id: 11,
     title: "Gladiator",
-    poster: "https://via.placeholder.com/150",
+    poster: "https://placehold.co/150",
     releaseDate: "2000-05-05",
     genre: "Action",
     description: "A former Roman General sets out to exact vengeance against the corrupt emperor who murdered his family and sent him into slavery.",
@@ -104,7 +104,7 @@ const movies = [
   {
     id: 12,
     title: "The Lion King",
-    poster: "https://via.placeholder.com/150",
+    poster: "https://placehold.co/150",
     releaseDate: "1994-06-15",
     genre: "Animation",
     description: "Lion prince Simba and his father are targeted by his bitter uncle, who wants to ascend the throne himself.",
@@ -112,7 +112,7 @@ const movies = [
   {
     id: 13,
     title: "Fight Club",
-    poster: "https://via.placeholder.com/150",
+    poster: "https://placehold.co/150",
     releaseDate: "1999-10-15",
     genre: "Drama",
     description: "An insomniac office worker and a soap salesman form an underground fight club that evolves into something much, much more.",
@@ -120,7 +120,7 @@ const movies = [
   {
     id: 14,
     title: "The Avengers",
-    poster: "https://via.placeholder.com/150",
+    poster: "https://placehold.co/150",
     releaseDate: "2012-05-04",
     genre: "Action",
     description: "Earth's mightiest heroes must come together and learn to fight as a team if they are going to stop the mischievous Loki and his alien army from subjugating Earth.",
@@ -128,7 +128,7 @@ const movies = [
   {
     id: 15,
     title: "The Lord of the Rings: The Return of the King",
-    poster: "https://via.placeholder.com/150",
+    poster: "https://placehold.co/150",
     releaseDate: "2003-12-17",
     genre: "Fantasy",
     description: "Gandalf and Aragorn lead the World of Men against Sauron to draw his gaze from Frodo and Sam as they approach Mount Doom with the One Ring.",
@@ -167,6 +167,28 @@ app.get("/movies/:id", (req, res) => {
   if (movie) res.json(movie);
   else res.status(404).json({ error: "Movie not found" });
 });
+
+// Add a new movie (POST)
+app.post("/movies", (req, res) => {
+  const { title, poster, releaseDate, genre, description } = req.body;
+
+  if (!title || !poster || !releaseDate || !genre || !description) {
+    return res.status(400).json({ error: "All movie fields are required" });
+  }
+
+  const newMovie = {
+    id: movies.length ? movies[movies.length - 1].id + 1 : 1, // Auto-generate ID
+    title,
+    poster,
+    releaseDate,
+    genre,
+    description,
+  };
+
+  movies.push(newMovie);
+  res.status(201).json(newMovie); // Send the created movie back as a response
+});
+
 
 // Update a movie (PUT)
 app.put("/movies/:id", (req, res) => {
