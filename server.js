@@ -223,22 +223,26 @@ app.delete("/movies/:id", (req, res) => {
     res.status(404).json({ error: "Movie not found" });
   }
 });
+// search query params
+
 app.get("/movies", (req, res) => {
-  // const db = router.db; // Access the JSON database
-  // const movies = db.get("movies").value(); // Get movies from db.json
+  console.log("Query Parameters: ", req.query); // Debug log for query parameters
 
   const { genre, search, limit = 10, page = 1 } = req.query;
 
+  const parsedLimit = parseInt(limit, 10) || 10; // Fallback to 10 if NaN
+  const parsedPage = parseInt(page, 10) || 1;   // Fallback to 1 if NaN
+
   let filteredMovies = movies;
 
-  // Filter by genre if specified
+  // Filter by genre
   if (genre) {
     filteredMovies = filteredMovies.filter((movie) =>
       movie.genre.toLowerCase().includes(genre.toLowerCase())
     );
   }
 
-  // Search by title or description if specified
+  // Search by title or description
   if (search) {
     filteredMovies = filteredMovies.filter(
       (movie) =>
@@ -248,17 +252,21 @@ app.get("/movies", (req, res) => {
   }
 
   // Pagination logic
-  const startIndex = (page - 1) * limit;
-  const endIndex = startIndex + parseInt(limit);
+  const startIndex = (parsedPage - 1) * parsedLimit;
+  const endIndex = startIndex + parsedLimit;
+
   const paginatedMovies = filteredMovies.slice(startIndex, endIndex);
 
+  // Send the response
   res.json({
-    totalItems: filteredMovies.length, // Total number of items after filtering
-    currentPage: parseInt(page),
-    totalPages: Math.ceil(filteredMovies.length / limit),
+    totalItems: filteredMovies.length,
+    currentPage: parsedPage,
+    totalPages: Math.ceil(filteredMovies.length / parsedLimit),
     movies: paginatedMovies,
   });
 });
+
+
 
 
 const PORT = process.env.PORT || 3000;
