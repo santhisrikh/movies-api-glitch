@@ -167,6 +167,49 @@ app.get("/movies/:id", (req, res) => {
   if (movie) res.json(movie);
   else res.status(404).json({ error: "Movie not found" });
 });
+// search query params
+
+app.get("/movies", (req, res) => {
+  console.log("Query Parameters: ", req.query); // Debug log for query parameters
+
+  const { genre, search, limit = 10, page = 1 } = req.query;
+
+  const parsedLimit = parseInt(limit, 10) || 10; // Fallback to 10 if NaN
+  const parsedPage = parseInt(page, 10) || 1;   // Fallback to 1 if NaN
+
+  let filteredMovies = movies;
+
+  // Filter by genre
+  if (genre) {
+    filteredMovies = filteredMovies.filter((movie) =>
+      movie.genre.toLowerCase().includes(genre.toLowerCase())
+    );
+  }
+
+  // Search by title or description
+  if (search) {
+    filteredMovies = filteredMovies.filter(
+      (movie) =>
+        movie.title.toLowerCase().includes(search.toLowerCase()) ||
+        movie.description.toLowerCase().includes(search.toLowerCase())
+    );
+  }
+
+  // Pagination logic
+  const startIndex = (parsedPage - 1) * parsedLimit;
+  const endIndex = startIndex + parsedLimit;
+
+  const paginatedMovies = filteredMovies.slice(startIndex, endIndex);
+
+  // Send the response
+  res.json({
+    totalItems: filteredMovies.length,
+    currentPage: parsedPage,
+    totalPages: Math.ceil(filteredMovies.length / parsedLimit),
+    movies: paginatedMovies,
+  });
+});
+
 
 // Add a new movie (POST)
 app.post("/movies", (req, res) => {
@@ -222,48 +265,6 @@ app.delete("/movies/:id", (req, res) => {
   } else {
     res.status(404).json({ error: "Movie not found" });
   }
-});
-// search query params
-
-app.get("/movies", (req, res) => {
-  console.log("Query Parameters: ", req.query); // Debug log for query parameters
-
-  const { genre, search, limit = 10, page = 1 } = req.query;
-
-  const parsedLimit = parseInt(limit, 10) || 10; // Fallback to 10 if NaN
-  const parsedPage = parseInt(page, 10) || 1;   // Fallback to 1 if NaN
-
-  let filteredMovies = movies;
-
-  // Filter by genre
-  if (genre) {
-    filteredMovies = filteredMovies.filter((movie) =>
-      movie.genre.toLowerCase().includes(genre.toLowerCase())
-    );
-  }
-
-  // Search by title or description
-  if (search) {
-    filteredMovies = filteredMovies.filter(
-      (movie) =>
-        movie.title.toLowerCase().includes(search.toLowerCase()) ||
-        movie.description.toLowerCase().includes(search.toLowerCase())
-    );
-  }
-
-  // Pagination logic
-  const startIndex = (parsedPage - 1) * parsedLimit;
-  const endIndex = startIndex + parsedLimit;
-
-  const paginatedMovies = filteredMovies.slice(startIndex, endIndex);
-
-  // Send the response
-  res.json({
-    totalItems: filteredMovies.length,
-    currentPage: parsedPage,
-    totalPages: Math.ceil(filteredMovies.length / parsedLimit),
-    movies: paginatedMovies,
-  });
 });
 
 
