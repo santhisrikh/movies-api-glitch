@@ -158,15 +158,9 @@ app.post("/login", (req, res) => {
 
 
 // Movies API
-app.get("/movies", (req, res) => {
-  res.json(movies);
-});
-
-app.get("/movies/:id", (req, res) => {
-  const movie = movies.find((m) => m.id === parseInt(req.params.id));
-  if (movie) res.json(movie);
-  else res.status(404).json({ error: "Movie not found" });
-});
+// app.get("/movies", (req, res) => {
+//   res.json(movies);
+// });
 // search query params
 
 app.get("/movies", (req, res) => {
@@ -209,6 +203,13 @@ app.get("/movies", (req, res) => {
     movies: paginatedMovies,
   });
 });
+
+app.get("/movies/:id", (req, res) => {
+  const movie = movies.find((m) => m.id === parseInt(req.params.id));
+  if (movie) res.json(movie);
+  else res.status(404).json({ error: "Movie not found" });
+});
+
 
 
 // Add a new movie (POST)
