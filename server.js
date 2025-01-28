@@ -166,7 +166,7 @@ app.post("/login", (req, res) => {
 app.get("/movies", (req, res) => {
   console.log("Query Parameters: ", req.query); // Debug log for query parameters
 
-  const { genre, search, limit = 10, page = 1 } = req.query;
+  const { genre, search, limit = 15, page = 1 } = req.query;
 
   const parsedLimit = parseInt(limit, 10) || 10; // Fallback to 10 if NaN
   const parsedPage = parseInt(page, 10) || 1;   // Fallback to 1 if NaN
