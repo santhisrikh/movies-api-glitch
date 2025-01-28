@@ -223,6 +223,43 @@ app.delete("/movies/:id", (req, res) => {
     res.status(404).json({ error: "Movie not found" });
   }
 });
+app.get("/movies", (req, res) => {
+  // const db = router.db; // Access the JSON database
+  // const movies = db.get("movies").value(); // Get movies from db.json
+
+  const { genre, search, limit = 10, page = 1 } = req.query;
+
+  let filteredMovies = movies;
+
+  // Filter by genre if specified
+  if (genre) {
+    filteredMovies = filteredMovies.filter((movie) =>
+      movie.genre.toLowerCase().includes(genre.toLowerCase())
+    );
+  }
+
+  // Search by title or description if specified
+  if (search) {
+    filteredMovies = filteredMovies.filter(
+      (movie) =>
+        movie.title.toLowerCase().includes(search.toLowerCase()) ||
+        movie.description.toLowerCase().includes(search.toLowerCase())
+    );
+  }
+
+  // Pagination logic
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + parseInt(limit);
+  const paginatedMovies = filteredMovies.slice(startIndex, endIndex);
+
+  res.json({
+    totalItems: filteredMovies.length, // Total number of items after filtering
+    currentPage: parseInt(page),
+    totalPages: Math.ceil(filteredMovies.length / limit),
+    movies: paginatedMovies,
+  });
+});
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`API is running on port ${PORT}`));
