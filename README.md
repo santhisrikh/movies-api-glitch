@@ -1,44 +1,260 @@
-# Hello Node!
+## API Documentation
 
-This project includes a Node.js server script and a web page that connects to it. The front-end page presents a form the visitor can use to submit a color name, sending the submitted value to the back-end API running on the server. The server returns info to the page that allows it to update the display with the chosen color. 🎨
+### 1. **Login API**
 
-[Node.js](https://nodejs.org/en/about/) is a popular runtime that lets you run server-side JavaScript. This project uses the [Fastify](https://www.fastify.io/) framework and explores basic templating with [Handlebars](https://handlebarsjs.com/).
+- **Endpoint**: `POST /login`
+- **Description**: Authenticates a user based on the provided username and password.
+- **Request Body**:
+    
+    ```json
+    
+    {
+      "username": "admin",
+      "password": "password123"
+    }
+    
+    ```
+    
+- **Response**:
+    - **Success**:
+        
+        ```json
+        
+        {
+          "success": true,
+          "token": "string"
+        }
+        
+        ```
+        
+    - **Failure** (Invalid credentials):
+        
+        ```json
+        
+        {
+          "success": false,
+          "message": "Invalid credentials"
+        }
+        
+        ```
+        
+- **Status Codes**:
+    - `200 OK`: Authentication successful
+    - `401 Unauthorized`: Invalid credentials
 
-_Last updated: 14 August 2023_
+---
 
-## Prerequisites
+### 2. **Movies API - Get All Movies**
 
-You'll get best use out of this project if you're familiar with basic JavaScript. If you've written JavaScript for client-side web pages this is a little different because it uses server-side JS, but the syntax is the same!
+- **Endpoint**: `GET /movies`
+- **Description**: Fetches a list of movies with optional filtering, searching, and pagination.
+- **Query Parameters**:
+    - `genre` (optional): Filter movies by genre.
+    - `search` (optional): Search movies by title or description.
+    - `limit` (optional, default: 15): Number of movies per page.
+    - `page` (optional, default: 1): Page number for pagination.
+- **Response**:
+    
+    ```json
+    {
+      "totalItems": 30,
+      "currentPage": 1,
+      "totalPages": 2,
+      "movies": [
+        {
+          "id": 1,
+          "title": "Inception",
+          "poster": "https://placehold.co/150",
+          "releaseDate": "2010-07-16",
+          "genre": "Sci-Fi",
+          "description": "A mind-bending thriller by Christopher Nolan."
+        },
+        // more movie objects...
+      ]
+    }
+    
+    ```
+    
+- **Status Codes**:
+    - `200 OK`: Successfully retrieved movies.
+    - `400 Bad Request`: Invalid query parameters.
 
-## What's in this project?
+---
 
-← `README.md`: That’s this file, where you can tell people what your cool website does and how you built it.
+### 3. **Movies API - Get Movie by ID**
 
-← `public/style.css`: The styling rules for the pages in your site.
+- **Endpoint**: `GET /movies/:id`
+- **Description**: Fetches a specific movie by its unique ID.
+- **Path Parameters**:
+    - `id`: The ID of the movie (e.g., `1`, `2`).
+- **Response**:
+    - **Success**:
+        
+        ```json
+        
+        {
+          "id": 1,
+          "title": "Inception",
+          "poster": "https://placehold.co/150",
+          "releaseDate": "2010-07-16",
+          "genre": "Sci-Fi",
+          "description": "A mind-bending thriller by Christopher Nolan."
+        }
+        
+        ```
+        
+    - **Failure** (Movie not found):
+        
+        ```json
+        
+        {
+          "error": "Movie not found"
+        }
+        
+        ```
+        
+- **Status Codes**:
+    - `200 OK`: Successfully retrieved movie details.
+    - `404 Not Found`: Movie not found.
 
-← `server.js`: The **Node.js** server script for your new site. The JavaScript defines the endpoints in the site back-end, one to return the homepage and one to update with the submitted color. Each one sends data to a Handlebars template which builds these parameter values into the web page the visitor sees.
+---
 
-← `package.json`: The NPM packages for your project's dependencies.
+### 4. **Movies API - Add a New Movie**
 
-← `src/`: This folder holds the site template along with some basic data files.
+- **Endpoint**: `POST /movies`
+- **Description**: Adds a new movie to the database.
+- **Request Body**:
+    
+    ```json
+    
+    {
+      "title": "string",
+      "poster": "string",
+      "releaseDate": "YYYY-MM-DD",
+      "genre": "string",
+      "description": "string"
+    }
+    
+    ```
+    
+- **Response**:
+    - **Success**:
+        
+        ```json
+        
+        {
+          "id": 31,
+          "title": "New Movie",
+          "poster": "https://placehold.co/150",
+          "releaseDate": "2025-01-01",
+          "genre": "Action",
+          "description": "Description of the new movie."
+        }
+        
+        ```
+        
+    - **Failure** (Missing required fields):
+        
+        ```json
+        
+        {
+          "error": "Missing required fields"
+        }
+        
+        ```
+        
+- **Status Codes**:
+    - `201 Created`: Successfully added the movie.
+    - `400 Bad Request`: Missing required fields or invalid data.
 
-← `src/pages/index.hbs`: This is the main page template for your site. The template receives parameters from the server script, which it includes in the page HTML. The page sends the user submitted color value in the body of a request, or as a query parameter to choose a random color.
+---
 
-← `src/colors.json`: A collection of CSS color names. We use this in the server script to pick a random color, and to match searches against color names.
+### 5. **Movies API - Update an Existing Movie**
 
-← `src/seo.json`: When you're ready to share your new site or add a custom domain, change SEO/meta settings in here.
+- **Endpoint**: `PUT /movies/:id`
+- **Description**: Updates the details of an existing movie by its ID.
+- **Path Parameters**:
+    - `id`: The ID of the movie (e.g., `1`, `2`).
+- **Request Body**:
+    
+    ```json
+    
+    {
+      "title": "string",
+      "poster": "string",
+      "releaseDate": "YYYY-MM-DD",
+      "genre": "string",
+      "description": "string"
+    }
+    
+    ```
+    
+- **Response**:
+    - **Success**:
+        
+        ```json
+        
+        {
+          "id": 1,
+          "title": "Updated Movie Title",
+          "poster": "https://placehold.co/150",
+          "releaseDate": "2025-01-01",
+          "genre": "Action",
+          "description": "Updated movie description."
+        }
+        
+        ```
+        
+    - **Failure** (Movie not found):
+        
+        ```json
+        
+        {
+          "error": "Movie not found"
+        }
+        
+        ```
+        
+- **Status Codes**:
+    - `200 OK`: Successfully updated the movie.
+    - `404 Not Found`: Movie not found.
 
-## Try this next 🏗️
+---
 
-Take a look in `TODO.md` for next steps you can try out in your new site!
+### 6. **Movies API - Delete a Movie**
 
-___Want a minimal version of this project to build your own Node.js app? Check out [Blank Node](https://glitch.com/edit/#!/remix/glitch-blank-node)!___
+- **Endpoint**: `DELETE /movies/:id`
+- **Description**: Deletes a movie by its ID.
+- **Path Parameters**:
+    - `id`: The ID of the movie (e.g., `1`, `2`).
+- **Response**:
+    - **Success**:
+        
+        ```json
+        
+        {
+          "success": true,
+          "message": "Movie deleted successfully."
+        }
+        
+        ```
+        
+    - **Failure** (Movie not found):
+        
+        ```json
+        
+        {
+          "error": "Movie not found"
+        }
+        
+        ```
+        
+- **Status Codes**:
+    - `200 OK`: Successfully deleted the movie.
+    - `404 Not Found`: Movie not found.
 
-![Glitch](https://cdn.glitch.com/a9975ea6-8949-4bab-addb-8a95021dc2da%2FLogo_Color.svg?v=1602781328576)
+---
 
-## You built this with Glitch!
+### Notes:
 
-[Glitch](https://glitch.com) is a friendly community where millions of people come together to build web apps and websites.
-
-- Need more help? [Check out our Help Center](https://help.glitch.com/) for answers to any common questions.
-- Ready to make it official? [Become a paid Glitch member](https://glitch.com/pricing) to boost your app with private sharing, more storage and memory, domains and more.
+- The `movies` endpoint supports filtering and pagination through query parameters (`genre`, `search`, `limit`, and `page`).
